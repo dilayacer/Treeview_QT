@@ -2,7 +2,7 @@ import sys
 from PyQt5 import QtWidgets
 from tab import Ui_MainWindow
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
-from PyQt5.QtWidgets import QTreeView, QVBoxLayout, QApplication, QWidget, QMainWindow
+from PyQt5.QtWidgets import QTreeView, QListWidget, QTabWidget, QPushButton, QWidget, QMainWindow
 class AppDemo(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
@@ -15,7 +15,16 @@ class AppDemo(QMainWindow, Ui_MainWindow):
         # QWidget üzerine QTreeView nesnesi eklenir
         self.tree_view = QTreeView(self.tree_view_widget)
         self.tree_view.setGeometry(30, 10, 200, 300)
-
+        
+        # Add Tab butonu
+        pushButton = QPushButton('Add Tab', self)
+        pushButton.setGeometry(200, 400,100,30)
+        pushButton.clicked.connect(self.add_new_tab)
+        
+        #Remove Tab butonu
+        pushButton_2 = QPushButton('Remove Tab', self)
+        pushButton_2.setGeometry(310, 400,100,30)
+        pushButton_2.clicked.connect(self.remove_tab)
         # QStandardItemModel nesnesi oluşturulur ve treeview'e eklenir
         self.model = QStandardItemModel()
         self.model.setHorizontalHeaderLabels(['Tab List'])
@@ -24,13 +33,32 @@ class AppDemo(QMainWindow, Ui_MainWindow):
         self.checkBox.stateChanged.connect(self.cb_close)
         self.checkBox_2.stateChanged.connect(self.cb2_close)
         self.checkBox_3.stateChanged.connect(self.cb3_close)
-        self.checkBox_4.stateChanged.connect(self.cb4_close)
+        self.checkBox_4.stateChanged.connect(self.cb4_close)   
         self.tab.setStyleSheet("background-color: rgb(170, 170, 255);")
-
+ 
         self.tabWidget.setTabVisible(3, False)
         self.tabWidget.setTabVisible(1, False)
         self.tabWidget.setTabVisible(2, False)
         self.tabWidget.setTabVisible(4, False)
+ 
+    
+    def add_new_tab(self):
+        print("pressed add")
+        new_tab = QWidget()
+        self.tabWidget.addTab(new_tab, "New Tab")
+        self.tabWidget.setStyleSheet("background-color: rgb(100, 100, 205);")
+        self.tabWidget.setCurrentWidget(new_tab)
+
+        item=QStandardItem("New Tab")
+        self.model.appendRow(item)
+
+    def remove_tab(self):
+        print("pressed remove")
+        current_index = self.tabWidget.currentIndex()
+
+        if current_index >= 4:
+            self.tabWidget.setTabVisible(current_index, False)
+            self.model.removeRow(current_index - 4)
 
     def cb_close(self):
         if self.checkBox.isChecked():
